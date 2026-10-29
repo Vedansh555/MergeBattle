@@ -26,7 +26,7 @@ function setPlatPaused(v){platPaused=!!v;applyPause()}
 let platMuted=false,userMute=false;
 function setMutedFlag(v){platMuted=!!v;applyPause()}
 function setAdOpen(v){adOpen=!!v;applyPause()}
-const yt=typeof ytgame!=='undefined'?ytgame:null;
+const yt0=typeof ytgame!=='undefined'?ytgame:null;const inYT=!!yt0&&window.parent!==window;const yt=inYT?yt0:null; /* outside YouTube (own site, Vercel) the build behaves like a normal web game: sound on, local save */
 const PF={name:'youtube',
   init(){if(!yt)return Promise.resolve();try{if(yt.system){yt.system.onPause(()=>setPlatPaused(true));yt.system.onResume(()=>setPlatPaused(false));setMutedFlag(!yt.system.isAudioEnabled());yt.system.onAudioEnabledChange(on=>setMutedFlag(!on))}}catch(e){}
     addEventListener('error',()=>{try{yt.health.logError()}catch(_){}});return Promise.resolve()},
@@ -34,8 +34,8 @@ const PF={name:'youtube',
   score(n){try{yt.engagement.sendScore({value:n})}catch(e){}},
   interstitial(){if(!yt)return;setAdOpen(true);try{Promise.resolve(yt.ads.requestInterstitialAd()).then(()=>setAdOpen(false),()=>setAdOpen(false))}catch(e){setAdOpen(false)}setTimeout(()=>setAdOpen(false),30000)},
   rewardedOk:()=>false,rewarded(){},
-  save(v){try{yt.game.saveData(v)}catch(e){}},
-  load(){try{return Promise.resolve(yt.game.loadData()).then(d=>d||null).catch(()=>null)}catch(e){return Promise.resolve(null)}}};
+  save(v){if(yt){try{yt.game.saveData(v)}catch(e){}}else{try{localStorage.setItem('mb_save2',v)}catch(e){}}},
+  load(){if(!yt){try{return Promise.resolve(localStorage.getItem('mb_save2'))}catch(e){return Promise.resolve(null)}}try{return Promise.resolve(yt.game.loadData()).then(d=>d||null).catch(()=>null)}catch(e){return Promise.resolve(null)}}};
 function rewardedOk(){try{return !!PF.rewardedOk()}catch(e){return false}}
 function showRewarded(pl,cb){try{PF.rewarded(pl,cb)}catch(e){}}
 function showAd(pl){try{PF.interstitial(pl)}catch(e){}}
@@ -53,6 +53,21 @@ const sfx={spawn:()=>tone(330,.12,'triangle',.14,660),shoot:()=>tone(520,.04,'sq
   disc:()=>[660,880,1100,1320].forEach((f,i)=>setTimeout(()=>tone(f,.16,'sine',.13),i*80)),
   boom:()=>tone(90,.35,'sawtooth',.2,40),zap:()=>tone(900,.18,'square',.1,200),ice:()=>tone(1200,.3,'sine',.1,600),card:()=>tone(700,.08,'triangle',.1,900),dbl:()=>[500,700,900].forEach((f,i)=>setTimeout(()=>tone(f,.12,'square',.08),i*70))};
 
+// ---------- background music: soft music-box loop (follows mute / pause, calm in prep, livelier in a wave) ----------
+const MUS={t:0,step:0,noise:null};
+const CH=[{r:130.81,n:[523.25,659.25,783.99,1046.5,880]},{r:110,n:[440,523.25,659.25,880,783.99]},{r:87.31,n:[523.25,698.46,880,1046.5,783.99]},{r:98,n:[493.88,587.33,783.99,987.77,659.25]}];
+function rnd(i){const v=Math.sin(i*12.9898)*43758.5453;return v-Math.floor(v)}
+function noteAt(t0,f,d,type,v){const a=actx,o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.setValueAtTime(f,t0);g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(v,t0+.012);g.gain.exponentialRampToValueAtTime(.0001,t0+d);o.connect(g);g.connect(a.destination);o.start(t0);o.stop(t0+d+.05)}
+function hatAt(t0,v){const a=actx;if(!MUS.noise){const b=a.createBuffer(1,Math.floor(a.sampleRate*.08),a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);MUS.noise=b}const so=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();so.buffer=MUS.noise;f.type='highpass';f.frequency.value=6500;g.gain.value=v;so.connect(f);f.connect(g);g.connect(a.destination);so.start(t0)}
+function musicStep(step,t0,sd){const bar=(step>>3)&3,pos=step&7,ch=CH[bar],fight=phase==='fight',hot=fight&&dblOn;
+  if(pos===0||pos===4){noteAt(t0,ch.r,sd*3.2,'sine',.07);if(fight&&pos===0)noteAt(t0,ch.r*2,sd*1.5,'triangle',.02)}
+  if(fight&&(pos&1))hatAt(t0,hot?.016:.011);
+  const r=rnd(step*7+bar),pr=fight?(hot?.85:.7):.5;
+  if(r<pr&&(pos%2===0||fight)){const n=ch.n[(rnd(step*3+1)*ch.n.length)|0];noteAt(t0,n,sd*1.9,'triangle',.045);if(rnd(step+99)<.18)noteAt(t0,n*2,sd*1.2,'sine',.016)}}
+function musicTick(){if(!actx||muted||paused||!gestured||actx.state!=='running'){MUS.t=0;return}
+  const now=actx.currentTime,bpm=phase==='fight'?(dblOn?132:112):96,sd=60/bpm/2;
+  if(MUS.t<now-.1||MUS.t>now+1.2)MUS.t=now+.06;
+  while(MUS.t<now+.3){musicStep(MUS.step,MUS.t,sd);MUS.t+=sd;MUS.step++}}
 // ---------- state ----------
 const NAMES=['Blobby','Bun Bun','Kit Kat','Pinky','Grapey','Foxy','Minty','Ruby','Leafy','Candy','Goldie','Lord Fluff'];
 let phase='menu',wave=1,coins=0,best=1,hearts=MAXH,losses=0,wavesSinceAd=0,t=0,sT=0,idle=0,tut=0,topLv=1,energy=5,powLv=0,elxLv=0,trophies=0;
@@ -547,7 +562,7 @@ document.addEventListener('contextmenu',e=>e.preventDefault());
 // ---------- loop ----------
 resetUnits();
 let last=performance.now();
-function frame(n){const dt=Math.min(.05,(n-last)/1e3);last=n;if(!paused)update(dt);draw();
+function frame(n){const dt=Math.min(.05,(n-last)/1e3);last=n;if(!paused)update(dt);draw();musicTick();
   if(!readySent&&platReady){readySent=true;PF.ready()}try{PF.gameplay(phase==='fight'&&!paused)}catch(e){}requestAnimationFrame(frame)}
 try{document.fonts.load('700 16px Fredoka')}catch(e){}
 PF.init().catch(()=>{}).then(()=>PF.load()).then(str=>{try{if(str)loadSave(JSON.parse(str))}catch(e){}}).catch(()=>{}).then(()=>{platReady=true;applyPause()});requestAnimationFrame(frame);

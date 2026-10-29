@@ -12,3 +12,4 @@
 | Rewarded ads | Not available | The portal has none, so no "watch ad" button is shown. |
 | `health.logError()` | Done | Called on window errors. |
 | Only what YouTube needs | Done | No mute button, skip button or keyboard shortcuts in this build. |
+| Also works outside YouTube | Done | If the page is opened directly (own site, Vercel), the YouTube SDK is ignored: sound stays on and progress is saved in the browser. |
