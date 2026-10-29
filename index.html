@@ -565,5 +565,6 @@ let last=performance.now();
 function frame(n){const dt=Math.min(.05,(n-last)/1e3);last=n;if(!paused)update(dt);draw();musicTick();
   if(!readySent&&platReady){readySent=true;PF.ready()}try{PF.gameplay(phase==='fight'&&!paused)}catch(e){}requestAnimationFrame(frame)}
 try{document.fonts.load('700 16px Fredoka')}catch(e){}
-PF.init().catch(()=>{}).then(()=>PF.load()).then(str=>{try{if(str)loadSave(JSON.parse(str))}catch(e){}}).catch(()=>{}).then(()=>{platReady=true;applyPause()});requestAnimationFrame(frame);
+const lim=(pr,ms)=>Promise.race([pr,new Promise(r=>setTimeout(()=>r(null),ms))]);
+lim(PF.init(),6000).catch(()=>{}).then(()=>lim(PF.load(),2500)).then(str=>{try{if(str)loadSave(JSON.parse(str))}catch(e){}}).catch(()=>{}).then(()=>{platReady=true;applyPause()});requestAnimationFrame(frame);
 </script></body></html>
