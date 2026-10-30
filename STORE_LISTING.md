@@ -1,45 +1,29 @@
-# Merge Battle - store listing (youtube)
+# Merge Battle - Playgama Store Listing
 
-**Category:** Strategy
-**Genre: Strategy / Casual - fits Playables' 'quick to learn' guidance**
-
-Title: Merge Battle
-Short description: Merge cute pals, cast cards and survive 3-minute monster waves - then beat the boss!
-Tagline: Merge. Cast. Survive.
-
-Long description:
+## Game Description
 Merge cute pals, defend your meadow and survive the monster horde!
 
-Every level is a 3-minute survival. Drop a PAL card anywhere on the field, then drag two matching pals together to merge them into a stronger, cuter pal (12 forms, from a tiny blobby to a crowned Lord Fluff). Your pals shoot on their own - but the monsters fight back! Slimes spit goo, bats dive, bomb-bugs explode, imps throw fire, archers shoot from afar, rock golems lob boulders, brutes leap and slam, and at the end of every level a giant BOSS arrives with its whole army.
+Every level is an action-packed 3-minute survival defense. Your meadow starts with a friendly green pal ready for battle. Press START WAVE in the center of the field to unleash the enemy horde!
 
-Use your elixir wisely: place pals, then cast BOMB, FREEZE, ZAP or HEART cards at the right moment. Pals can fall in battle (they come back after the level one form weaker), so keep merging. Earn stars, collect coins and spend them on lasting POWER and ELIXIR upgrades.
+Your pals fight and shoot automatically, but their energy ticks down in combat. Drag and drop matching pals together to merge them into a stronger, cuter evolution! Merging instantly restores full health and grants a fresh, extended lifetime timer (+5s per level). Discover 12 unique forms, from a tiny Blobby to the crowned Lord Fluff.
 
-Cute pastel art, juicy effects, relaxing music-box sounds and quick sessions - perfect for phone, tablet and desktop.
+Use your recharging elixir wisely during combat: summon reinforcements with the PAL card, or turn the tide with powerful BOMB, FREEZE, and ZAP spells when monsters overwhelm your lawn. At the end of every wave, a giant Boss charges in with its elite army.
 
-How to play: 1) Tap or drag the PAL card onto the field to place a pal. 2) Drag a pal onto an identical pal to merge them into a stronger one. 3) Press START WAVE and survive until the 3:00 timer ends. 4) Use BOMB / FREEZE / ZAP / HEART cards (they cost elixir) when monsters pile up. 5) Beat the boss to clear the level, collect stars and coins, buy upgrades and go again.
-Controls: Touch or mouse only: tap a card to auto-place it, or drag a card onto the field; drag pals to move or merge them. Keyboard: Space/Enter = start.
-Keywords / tags: merge, defense, tower defense, strategy, cute, casual, survival, boss fight, cards, idle-friendly, mobile, one finger
-Orientation: portrait (also plays well in landscape; the field scales to any screen - phone, tablet, desktop)
-Languages: English (UI is mostly icons and numbers)
-Audience: everyone. Cartoon-style monsters only, no violence beyond cartoon effects, no chat, no external links, no purchases.
-Average session: 3 minutes per level (6-9 minutes typical visit)
-Saves: tiny JSON (wave, coins, upgrades, pals on the field), a few hundred bytes.
-Ads: optional interstitial between levels (never mid-level) (YouTube interstitial only; no rewarded ads on Playables)
-Technical: single index.html, about 105 KB, no external requests other than the portal SDK, embedded rounded font (Fredoka, OFL licence), HTML5 canvas, works offline after load.
+Survive the timer, defeat the boss, earn stars and coins, and unlock permanent POWER and ELIXIR upgrades! Featuring sweet pastel visuals, bouncy animations, relaxing music-box sounds, and fast, satisfying sessions.
 
-## Assets in this folder
-- thumbnails/thumbnail-landscape-1920x1080.png - 16:9 thumbnail
-- thumbnails/thumbnail-portrait-1080x1920.png - 9:16 thumbnail
-- thumbnails/thumbnail-portrait-800x1200.png - 2:3 thumbnail
-- thumbnails/thumbnail-square-800x800.png - 1:1 thumbnail
-- thumbnails/thumbnail-square-1024x1024.png - 1:1 icon-style thumbnail
-- video/gameplay-portrait-1080x1920.mp4 - video 9:16
-- video/gameplay-landscape-1280x720.mp4 - video 16:9
-- screenshots/screenshot-1-menu-1080x1920.png - 1080x1920
-- screenshots/screenshot-2-prep-1080x1920.png - 1080x1920
-- screenshots/screenshot-3-fight-1080x1920.png - 1080x1920
-- screenshots/screenshot-4-combo-1080x1920.png - 1080x1920
-- screenshots/screenshot-5-boss-1080x1920.png - 1080x1920
-- screenshots/screenshot-6-win-1080x1920.png - 1080x1920
-- index.html - the game
-- merge-battle-youtube.zip - upload-ready zip (index.html)
+---
+
+## How to Play
+1. Review your meadow during the prep phase (every level starts with 1 Green Pal), then tap the big START WAVE button in the center to begin the fight.
+2. Pals attack automatically in combat. Watch their life timer bars—drag two matching pals together before time expires to merge them into a stronger form with 100% restored health and a refreshed timer (+5s per level).
+3. Use recharging elixir during the wave to deploy more pals with the PAL card or cast BOMB, FREEZE, and ZAP spells to clear enemy swarms.
+4. Survive the 3:00 timer and defeat the final Boss to clear the level.
+5. Earn stars and coins to buy permanent Power and Elixir upgrades between waves!
+
+---
+
+## Technical Specifications
+- Built for Playgama Bridge SDK v2 (bundled locally in archive, 100% offline-compatible automatic build checks).
+- Single index.html, zero external network dependencies (Rule 1.2.5 compliant).
+- Strict-mode IIFE isolated scope (safe against Cloudflare / proxy global variable injections).
+- Embedded Fredoka font, WebAudio procedural sound synthesis, responsive canvas layout.
