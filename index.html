@@ -7,7 +7,7 @@ canvas{position:fixed;left:0;top:0;width:100%;height:100%;height:100dvh;display:
 <script>
 "use strict";
 const FONT='"Fredoka","Baloo 2","Nunito","Arial Rounded MT Bold","Segoe UI Black","Avenir Next Heavy","Trebuchet MS",system-ui,sans-serif';
-const W=360,INK='#3a3550',MAXLV=12,MAXU=40,MAXH=5,PALCOST=2;
+const W=360,INK='#3a3550',MAXLV=12,MAXU=40,MAXH=5,PALCOST=1;
 const cv=document.getElementById('c'),x=cv.getContext('2d');
 let H=640,sc=1,ox=0,oy=0,dpr=1,SAFE_T=0,SAFE_B=0,topY=46,baseY=516,btnY=566,zoneT=261;
 const CX=i=>60+i*75,CW=70;
@@ -104,7 +104,7 @@ const dmgMul=()=>1+.15*powLv,regenRate=()=>.55*(1+.1*elxLv),upCost=l=>Math.round
 const dmgOf=lv=>2*Math.pow(2.4,lv-1);
 const rateOf=lv=>.8/(1+.05*(lv-1));
 const COLORS=['#7ed6a4','#6ec6f2','#ffd166','#ff9fb2','#b69cff','#ff9a5c','#5fd3c8','#f27a7a','#8fd14f','#ffb3e6','#f2c94c','#ff6b6b'];
-const CARDS={pal:{n:'PAL',c:PALCOST,col:'#5ccfb4'},bomb:{n:'BOMB',c:3,col:'#ff8a5c'},freeze:{n:'FREEZE',c:4,col:'#6ec6f2'},heart:{n:'HEART',c:5,col:'#ff7a9a'},zap:{n:'ZAP',c:4,col:'#f2c230'}};
+const CARDS={pal:{n:'PAL',c:PALCOST,col:'#5ccfb4'},bomb:{n:'BOMB',c:2,col:'#ff8a5c'},freeze:{n:'FREEZE',c:4,col:'#6ec6f2'},heart:{n:'HEART',c:4,col:'#ff7a9a'},zap:{n:'ZAP',c:4,col:'#f2c230'}};
 hand=['pal','bomb','freeze','zap'];
 const unitCap=()=>MAXU;
 let cardAnim=[.5,.6,.7,.8],cardOk=[false,false,false,false],cardPulse=[0,0,0,0];
@@ -152,7 +152,7 @@ function ring(px,py,c){rings.push({x:px,y:py,l:.45,c})}
 let toastS='',toastT=0,toastC='#8a5cf0',denyT=0;
 function toast(){denyT=.4;tone(140,.12,'square',.08)}
 function floatT(){}
-function waveWon(){revive();stars=hearts>=5?3:hearts>=3?2:1;trophies+=stars;bonusGot=Math.round((15+wave*5)*(.8+stars*.4)*(wave<=3?1.6:1));coins+=bonusGot;phase='won';sT=0;chestT=0;chestPop=false;shots=[];enemies=[];eshots=[];sfx.win();PF.levelEnd(wave,true);PF.score(wave);if(wave>=best)best=wave+1;wave++;wavesSinceAd++;save()}
+function waveWon(){stars=hearts>=5?3:hearts>=3?2:1;trophies+=stars;bonusGot=Math.round((15+wave*5)*(.8+stars*.4)*(wave<=3?1.6:1));coins+=bonusGot;phase='won';sT=0;chestT=0;chestPop=false;shots=[];enemies=[];eshots=[];sfx.win();PF.levelEnd(wave,true);PF.score(wave);if(wave>=best)best=wave+1;wave++;wavesSinceAd++;save()}
 function waveLost(){phase='lost';sT=0;shots=[];enemies=[];eshots=[];losses++;rewUsed=false;const help=15+wave*5;coins+=help;bonusGot=help;sfx.lose();PF.levelEnd(wave,false);save()}
 function chestReady(){return Date.now()>=chestAt}
 function doOpenChest(){const r=60+wave*8+topLv*5;coins+=r;chestAt=Date.now()+180000;menuToast={t:2.2,txt:'+'+r+' coins!'};sfx.win();save()}
@@ -161,7 +161,7 @@ function openChest(){if(chestReady()){doOpenChest();return}
 function next(){
   if(phase!=='menu')hearts=MAXH;
   if(phase==='menu'){phase='prep';idle=0;return}
-  if(phase==='won'){if(wavesSinceAd>=4){wavesSinceAd=0;showAd('level_completed')}phase='prep';idle=0;energy=Math.max(energy,5);return}
+  if(phase==='won'){if(wavesSinceAd>=4){wavesSinceAd=0;showAd('level_completed')}resetUnits();fallen=[];phase='prep';idle=0;energy=10;save();return}
   if(phase==='lost'){if(losses%3===0)showAd('game_over');resetUnits();fallen=[];phase='prep';idle=0;energy=10;save();return}
 }
 function tutStep(){if(tut>=3||phase!=='prep')return -1;if(maxOnField()>=2)return 2;return units.length<2?0:1}
